@@ -1,16 +1,17 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.0.0)
+cmake_minimum_required(VERSION 3.0.2)
 
 # Build Properties
-SET(CMAKE_INSTALL_INCDIR "include/clipper" CACHE PATH "Default relative include path.")
-SET(CMAKE_INSTALL_LIBDIR "lib${LIB_SUFFIX}" CACHE PATH "Default relative lib path.")
+set(CMAKE_INSTALL_INCLUDEDIR "include" CACHE PATH "Default relative include path.")
+set(CMAKE_INSTALL_LIBDIR "lib" CACHE PATH "Default relative lib path.")
 
 # Targets
 # NOTE: Only static libs supported as STL are part of the interface.
-PROJECT(clipper)
-ADD_LIBRARY(clipper STATIC clipper.cpp)
+project(clipper-lib)
+add_library(${PROJECT_NAME} STATIC clipper.cpp clipper.hpp)
+set_target_properties(${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "d")
 
 # Deployment
-INSTALL (FILES clipper.hpp DESTINATION "${CMAKE_INSTALL_INCDIR}")
-INSTALL (TARGETS clipper
+install (FILES clipper.hpp DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/clipper")
+install (TARGETS ${PROJECT_NAME}
          ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
          LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
