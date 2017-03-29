@@ -22,7 +22,7 @@ add_library(${PROJECT_NAME} STATIC clipper/clipper.cpp clipper/clipper.hpp)
 set_target_properties (${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "d")
 set_target_properties (${PROJECT_NAME} PROPERTIES VERSION ${CLIPPER_VERSION_STRING})
 target_include_directories(${PROJECT_NAME} INTERFACE
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/clipper-lib>
+  $<BUILD_INTERFACE:${clipper-lib_SOURCE_DIR}>
   $<INSTALL_INTERFACE:include>
 )
 
