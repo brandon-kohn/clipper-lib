@@ -15,6 +15,11 @@ list(GET VERSION_RESULT 2 VERSION_PATCH)
 set (CLIPPER_VERSION_STRING ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 message(STATUS "Clipper version ${CLIPPER_VERSION_STRING}.")
 
+if(MSVC AND NOT "${FORCE_MSVC_RUNTIME}" STREQUAL "")
+    message(STATUS "Clipper: Forcing msvc runtime to ${FORCE_MSVC_RUNTIME}")
+    force_msvc_runtime()
+endif()
+
 # Targets
 # NOTE: Only static libs supported as STL are part of the interface.
 project(clipper-lib)
