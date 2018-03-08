@@ -47,7 +47,9 @@
 #define use_lines
   
 //use_deprecated: Enables temporary support for the obsolete functions
-//#define use_deprecated  
+//#define use_deprecated 
+//
+#include "clipper_export.hpp"
 
 #include <vector>
 #include <list>
@@ -133,7 +135,7 @@ enum EndType {etClosedPolygon, etClosedLine, etOpenButt, etOpenSquare, etOpenRou
 class PolyNode;
 typedef std::vector< PolyNode* > PolyNodes;
 
-class PolyNode 
+class CLIPPER_API PolyNode 
 { 
 public:
     PolyNode();
@@ -157,7 +159,7 @@ private:
     friend class ClipperOffset; 
 };
 
-class PolyTree: public PolyNode
+class CLIPPER_API PolyTree: public PolyNode
 { 
 public:
     ~PolyTree(){ Clear(); };
@@ -170,29 +172,29 @@ private:
     friend class Clipper; //to access AllNodes
 };
 
-bool Orientation(const Path &poly);
-double Area(const Path &poly);
-int PointInPolygon(const IntPoint &pt, const Path &path);
+bool CLIPPER_API Orientation(const Path &poly);
+double CLIPPER_API Area(const Path &poly);
+int CLIPPER_API PointInPolygon(const IntPoint &pt, const Path &path);
 
-void SimplifyPolygon(const Path &in_poly, Paths &out_polys, PolyFillType fillType = pftEvenOdd);
-void SimplifyPolygons(const Paths &in_polys, Paths &out_polys, PolyFillType fillType = pftEvenOdd);
-void SimplifyPolygons(Paths &polys, PolyFillType fillType = pftEvenOdd);
+void CLIPPER_API SimplifyPolygon(const Path &in_poly, Paths &out_polys, PolyFillType fillType = pftEvenOdd);
+void CLIPPER_API SimplifyPolygons(const Paths &in_polys, Paths &out_polys, PolyFillType fillType = pftEvenOdd);
+void CLIPPER_API SimplifyPolygons(Paths &polys, PolyFillType fillType = pftEvenOdd);
 
-void CleanPolygon(const Path& in_poly, Path& out_poly, double distance = 1.415);
-void CleanPolygon(Path& poly, double distance = 1.415);
-void CleanPolygons(const Paths& in_polys, Paths& out_polys, double distance = 1.415);
-void CleanPolygons(Paths& polys, double distance = 1.415);
+void CLIPPER_API CleanPolygon(const Path& in_poly, Path& out_poly, double distance = 1.415);
+void CLIPPER_API CleanPolygon(Path& poly, double distance = 1.415);
+void CLIPPER_API CleanPolygons(const Paths& in_polys, Paths& out_polys, double distance = 1.415);
+void CLIPPER_API CleanPolygons(Paths& polys, double distance = 1.415);
 
-void MinkowskiSum(const Path& pattern, const Path& path, Paths& solution, bool pathIsClosed);
-void MinkowskiSum(const Path& pattern, const Paths& paths, Paths& solution, bool pathIsClosed);
-void MinkowskiDiff(const Path& poly1, const Path& poly2, Paths& solution);
+void CLIPPER_API MinkowskiSum(const Path& pattern, const Path& path, Paths& solution, bool pathIsClosed);
+void CLIPPER_API MinkowskiSum(const Path& pattern, const Paths& paths, Paths& solution, bool pathIsClosed);
+void CLIPPER_API MinkowskiDiff(const Path& poly1, const Path& poly2, Paths& solution);
 
-void PolyTreeToPaths(const PolyTree& polytree, Paths& paths);
-void ClosedPathsFromPolyTree(const PolyTree& polytree, Paths& paths);
-void OpenPathsFromPolyTree(PolyTree& polytree, Paths& paths);
+void CLIPPER_API PolyTreeToPaths(const PolyTree& polytree, Paths& paths);
+void CLIPPER_API ClosedPathsFromPolyTree(const PolyTree& polytree, Paths& paths);
+void CLIPPER_API OpenPathsFromPolyTree(PolyTree& polytree, Paths& paths);
 
-void ReversePath(Path& p);
-void ReversePaths(Paths& p);
+void CLIPPER_API ReversePath(Path& p);
+void CLIPPER_API ReversePaths(Paths& p);
 
 struct IntRect { cInt left; cInt top; cInt right; cInt bottom; };
 
