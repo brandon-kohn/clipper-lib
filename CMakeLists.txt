@@ -22,17 +22,26 @@ endif()
 
 # Targets
 # NOTE: Only static libs supported as STL are part of the interface.
-project(clipper-lib)
-add_library(${PROJECT_NAME} STATIC clipper/clipper.cpp clipper/clipper.hpp)
-set_target_properties (${PROJECT_NAME} PROPERTIES DEBUG_POSTFIX "d")
-set_target_properties (${PROJECT_NAME} PROPERTIES VERSION ${CLIPPER_VERSION_STRING})
-target_include_directories(${PROJECT_NAME} INTERFACE
-  $<BUILD_INTERFACE:${clipper-lib_SOURCE_DIR}>
-  $<INSTALL_INTERFACE:include>
-)
+project(clipper)
+
+set(CLIPPER_STATIC_LIBRARY ${PROJECT_NAME}_static)
+set(CLIPPER_SHARED_LIBRARY ${PROJECT_NAME})
+
+add_library(${CLIPPER_SHARED_LIBRARY} SHARED clipper/clipper.cpp clipper/clipper.hpp)
+set_target_properties (${CLIPPER_SHARED_LIBRARY} PROPERTIES DEBUG_POSTFIX "d")
+set_target_properties (${CLIPPER_SHARED_LIBRARY} PROPERTIES VERSION ${CLIPPER_VERSION_STRING})
+target_compile_definitions(${CLIPPER_SHARED_LIBRARY} PRIVATE -DCLIPPER_SHARED_LIB)
+target_include_directories(${CLIPPER_SHARED_LIBRARY} INTERFACE $<BUILD_INTERFACE:${clipper_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
+
+add_library(${CLIPPER_STATIC_LIBRARY} STATIC clipper/clipper.cpp clipper/clipper.hpp)
+set_target_properties (${CLIPPER_STATIC_LIBRARY} PROPERTIES DEBUG_POSTFIX "d")
+set_target_properties (${CLIPPER_STATIC_LIBRARY} PROPERTIES VERSION ${CLIPPER_VERSION_STRING})
+target_compile_definitions(${CLIPPER_STATIC_LIBRARY} PUBLIC -DCLIPPER_STATIC_LIB)
+target_include_directories(${CLIPPER_STATIC_LIBRARY} INTERFACE $<BUILD_INTERFACE:${clipper_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
 
 # Deployment
 install (FILES clipper/clipper.hpp DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/clipper")
-install (TARGETS ${PROJECT_NAME}
+install (TARGETS ${CLIPPER_SHARED_LIBRARY} ${CLIPPER_STATIC_LIBRARY}
+         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
          ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
          LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}")
