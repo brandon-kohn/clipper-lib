@@ -30,7 +30,7 @@ set(CLIPPER_SHARED_LIBRARY ${PROJECT_NAME})
 add_library(${CLIPPER_SHARED_LIBRARY} SHARED clipper/clipper.cpp clipper/clipper.hpp)
 set_target_properties (${CLIPPER_SHARED_LIBRARY} PROPERTIES DEBUG_POSTFIX "d")
 set_target_properties (${CLIPPER_SHARED_LIBRARY} PROPERTIES VERSION ${CLIPPER_VERSION_STRING})
-target_compile_definitions(${CLIPPER_SHARED_LIBRARY} PRIVATE -DCLIPPER_SHARED_LIB)
+target_compile_definitions(${CLIPPER_SHARED_LIBRARY} PRIVATE -DCLIPPER_EXPORTS_API)
 target_include_directories(${CLIPPER_SHARED_LIBRARY} INTERFACE $<BUILD_INTERFACE:${clipper_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
 
 add_library(${CLIPPER_STATIC_LIBRARY} STATIC clipper/clipper.cpp clipper/clipper.hpp)
