@@ -219,7 +219,7 @@ typedef std::vector < IntersectNode* > IntersectList;
 //ClipperBase is the ancestor to the Clipper class. It should not be
 //instantiated directly. This class simply abstracts the conversion of sets of
 //polygon coordinates into edge objects that are stored in a LocalMinima list.
-class ClipperBase
+class CLIPPER_API ClipperBase
 {
 public:
   ClipperBase();
@@ -262,7 +262,7 @@ protected:
 };
 //------------------------------------------------------------------------------
 
-class Clipper : public virtual ClipperBase
+class CLIPPER_API Clipper : public virtual ClipperBase
 {
 public:
   Clipper(int initOptions = 0);
@@ -359,7 +359,7 @@ private:
 };
 //------------------------------------------------------------------------------
 
-class ClipperOffset 
+class CLIPPER_API ClipperOffset 
 {
 public:
   ClipperOffset(double miterLimit = 2.0, double roundPrecision = 0.25);
