@@ -27,13 +27,13 @@ project(clipper)
 set(CLIPPER_STATIC_LIBRARY ${PROJECT_NAME}_static)
 set(CLIPPER_SHARED_LIBRARY ${PROJECT_NAME})
 
-add_library(${CLIPPER_SHARED_LIBRARY} SHARED clipper/clipper.cpp clipper/clipper.hpp clipper/clipper_exports.hpp)
+add_library(${CLIPPER_SHARED_LIBRARY} SHARED clipper/clipper.cpp clipper/clipper.hpp clipper/clipper_export.hpp)
 set_target_properties (${CLIPPER_SHARED_LIBRARY} PROPERTIES DEBUG_POSTFIX "d")
 set_target_properties (${CLIPPER_SHARED_LIBRARY} PROPERTIES VERSION ${CLIPPER_VERSION_STRING})
 target_compile_definitions(${CLIPPER_SHARED_LIBRARY} PRIVATE -DCLIPPER_EXPORTS_API)
 target_include_directories(${CLIPPER_SHARED_LIBRARY} INTERFACE $<BUILD_INTERFACE:${clipper_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
 
-add_library(${CLIPPER_STATIC_LIBRARY} STATIC clipper/clipper.cpp clipper/clipper.hpp clipper/clipper_exports.hpp)
+add_library(${CLIPPER_STATIC_LIBRARY} STATIC clipper/clipper.cpp clipper/clipper.hpp clipper/clipper_export.hpp)
 set_target_properties (${CLIPPER_STATIC_LIBRARY} PROPERTIES DEBUG_POSTFIX "d")
 set_target_properties (${CLIPPER_STATIC_LIBRARY} PROPERTIES VERSION ${CLIPPER_VERSION_STRING})
 target_compile_definitions(${CLIPPER_STATIC_LIBRARY} PUBLIC -DCLIPPER_STATIC_LIB)
@@ -59,7 +59,7 @@ IF("${isSystemDir}" STREQUAL "-1")
 ENDIF("${isSystemDir}" STREQUAL "-1")
 
 # Deployment
-install (FILES clipper/clipper.hpp clipper/clipper_exports.hpp DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/clipper")
+install (FILES clipper/clipper.hpp clipper/clipper_export.hpp DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/clipper")
 install (TARGETS ${CLIPPER_SHARED_LIBRARY} ${CLIPPER_STATIC_LIBRARY}
          RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
          ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
