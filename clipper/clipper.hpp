@@ -96,11 +96,19 @@ struct IntPoint {
 
   friend inline bool operator== (const IntPoint& a, const IntPoint& b)
   {
+#ifdef use_xyz
+    return a.X == b.X && a.Y == b.Y && a.Z == b.Z;
+#else
     return a.X == b.X && a.Y == b.Y;
+#endif
   }
   friend inline bool operator!= (const IntPoint& a, const IntPoint& b)
   {
-    return a.X != b.X  || a.Y != b.Y; 
+#ifdef use_xyz
+    return a.X != b.X  || a.Y != b.Y || a.Z != b.Z;
+#else
+    return a.X != b.X  || a.Y != b.Y;
+#endif
   }
 };
 //------------------------------------------------------------------------------
