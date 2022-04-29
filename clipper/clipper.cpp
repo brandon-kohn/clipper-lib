@@ -3884,11 +3884,11 @@ void ClipperOffset::FixOrientations()
 }
 //------------------------------------------------------------------------------
 
-void ClipperOffset::Execute(Paths& solution, double delta)
+void ClipperOffset::Execute(Paths& solution, double delta, const MathKernel& math)
 {
   solution.clear();
   FixOrientations();
-  DoOffset(delta);
+  DoOffset(delta, math);
   
   //now clean up 'corners' ...
   Clipper clpr;
@@ -3914,11 +3914,11 @@ void ClipperOffset::Execute(Paths& solution, double delta)
 }
 //------------------------------------------------------------------------------
 
-void ClipperOffset::Execute(PolyTree& solution, double delta)
+void ClipperOffset::Execute(PolyTree& solution, double delta, const MathKernel& math)
 {
   solution.Clear();
   FixOrientations();
-  DoOffset(delta);
+  DoOffset(delta, math);
 
   //now clean up 'corners' ...
   Clipper clpr;
@@ -3955,7 +3955,7 @@ void ClipperOffset::Execute(PolyTree& solution, double delta)
 }
 //------------------------------------------------------------------------------
 
-void ClipperOffset::DoOffset(double delta)
+void ClipperOffset::DoOffset(double delta, const MathKernel& math)
 {
   m_destPolys.clear();
   m_delta = delta;
@@ -3986,8 +3986,8 @@ void ClipperOffset::DoOffset(double delta)
   double steps = pi / std::acos(1 - y / std::fabs(delta));
   if (steps > std::fabs(delta) * pi) 
     steps = std::fabs(delta) * pi;  //ie excessive precision check
-  m_sin = std::sin(two_pi / steps);
-  m_cos = std::cos(two_pi / steps);
+  m_sin = math.sin(two_pi / steps);
+  m_cos = math.cos(two_pi / steps);
   m_StepsPerRad = steps / two_pi;
   if (delta < 0.0) m_sin = -m_sin;
 
@@ -4047,14 +4047,14 @@ void ClipperOffset::DoOffset(double delta)
     {
       int k = len - 1;
       for (int j = 0; j < len; ++j)
-        OffsetPoint(j, k, node.m_jointype);
+        OffsetPoint(j, k, node.m_jointype, math);
       m_destPolys.push_back(m_destPoly);
     }
     else if (node.m_endtype == etClosedLine)
     {
       int k = len - 1;
       for (int j = 0; j < len; ++j)
-        OffsetPoint(j, k, node.m_jointype);
+        OffsetPoint(j, k, node.m_jointype, math);
       m_destPolys.push_back(m_destPoly);
       m_destPoly.clear();
       //re-build m_normals ...
@@ -4064,14 +4064,14 @@ void ClipperOffset::DoOffset(double delta)
       m_normals[0] = DoublePoint(-n.X, -n.Y);
       k = 0;
       for (int j = len - 1; j >= 0; j--)
-        OffsetPoint(j, k, node.m_jointype);
+        OffsetPoint(j, k, node.m_jointype, math);
       m_destPolys.push_back(m_destPoly);
     }
     else
     {
       int k = 0;
       for (int j = 1; j < len - 1; ++j)
-        OffsetPoint(j, k, node.m_jointype);
+        OffsetPoint(j, k, node.m_jointype, math);
 
       IntPoint pt1;
       if (node.m_endtype == etOpenButt)
@@ -4091,9 +4091,9 @@ void ClipperOffset::DoOffset(double delta)
         m_sinA = 0;
         m_normals[j] = DoublePoint(-m_normals[j].X, -m_normals[j].Y);
         if (node.m_endtype == etOpenSquare)
-          DoSquare(j, k);
+          DoSquare(j, k, math);
         else
-          DoRound(j, k);
+          DoRound(j, k, math);
       }
 
       //re-build m_normals ...
@@ -4102,7 +4102,7 @@ void ClipperOffset::DoOffset(double delta)
       m_normals[0] = DoublePoint(-m_normals[1].X, -m_normals[1].Y);
 
       k = len - 1;
-      for (int j = k - 1; j > 0; --j) OffsetPoint(j, k, node.m_jointype);
+      for (int j = k - 1; j > 0; --j) OffsetPoint(j, k, node.m_jointype, math);
 
       if (node.m_endtype == etOpenButt)
       {
@@ -4118,9 +4118,9 @@ void ClipperOffset::DoOffset(double delta)
         k = 1;
         m_sinA = 0;
         if (node.m_endtype == etOpenSquare)
-          DoSquare(0, 1);
+          DoSquare(0, 1, math);
         else
-          DoRound(0, 1);
+          DoRound(0, 1, math);
       }
       m_destPolys.push_back(m_destPoly);
     }
@@ -4128,7 +4128,7 @@ void ClipperOffset::DoOffset(double delta)
 }
 //------------------------------------------------------------------------------
 
-void ClipperOffset::OffsetPoint(int j, int& k, JoinType jointype)
+void ClipperOffset::OffsetPoint(int j, int& k, JoinType jointype, const MathKernel& math)
 {
   //cross product ...
   m_sinA = (m_normals[k].X * m_normals[j].Y - m_normals[j].X * m_normals[k].Y);
@@ -4162,19 +4162,19 @@ void ClipperOffset::OffsetPoint(int j, int& k, JoinType jointype)
         {
           double r = 1 + (m_normals[j].X * m_normals[k].X +
             m_normals[j].Y * m_normals[k].Y);
-          if (r >= m_miterLim) DoMiter(j, k, r); else DoSquare(j, k);
+          if (r >= m_miterLim) DoMiter(j, k, r); else DoSquare(j, k, math);
           break;
         }
-      case jtSquare: DoSquare(j, k); break;
-      case jtRound: DoRound(j, k); break;
+      case jtSquare: DoSquare(j, k, math); break;
+      case jtRound: DoRound(j, k, math); break;
     }
   k = j;
 }
 //------------------------------------------------------------------------------
 
-void ClipperOffset::DoSquare(int j, int k)
+void ClipperOffset::DoSquare(int j, int k, const MathKernel& math)
 {
-  double dx = std::tan(std::atan2(m_sinA,
+  double dx = math.tan(math.atan2(m_sinA,
       m_normals[k].X * m_normals[j].X + m_normals[k].Y * m_normals[j].Y) / 4);
   m_destPoly.push_back(IntPoint(
       Round(m_srcPoly[j].X + m_delta * (m_normals[k].X - m_normals[k].Y * dx)),
@@ -4193,9 +4193,9 @@ void ClipperOffset::DoMiter(int j, int k, double r)
 }
 //------------------------------------------------------------------------------
 
-void ClipperOffset::DoRound(int j, int k)
+void ClipperOffset::DoRound(int j, int k, const MathKernel& math)
 {
-  double a = std::atan2(m_sinA,
+  double a = math.atan2(m_sinA,
   m_normals[k].X * m_normals[j].X + m_normals[k].Y * m_normals[j].Y);
   int steps = std::max((int)Round(m_StepsPerRad * std::fabs(a)), 1);
 
@@ -4625,5 +4625,19 @@ std::ostream& operator <<(std::ostream &s, const Paths &p)
   return s;
 }
 //------------------------------------------------------------------------------
+
+ MathKernel::MathKernel()
+	: cos{ []( double v )
+		{ return std::cos( v ); } }
+	, acos{ []( double v )
+		{ return std::acos( v ); } }
+	, sin{ []( double v )
+		{ return std::sin( v ); } }
+	, tan{ []( double v )
+		{ return std::tan( v ); } }
+	, atan2{ []( double y, double x )
+		{ return std::atan2( y, x ); } }
+{
+}
 
 } //ClipperLib namespace

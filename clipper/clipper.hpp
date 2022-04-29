@@ -63,6 +63,31 @@
 
 namespace ClipperLib {
 
+    struct MathKernel
+	{
+        using CosFunction = std::function<double(double)>;
+        using ACosFunction = std::function<double(double)>;
+        using SinFunction = std::function<double(double)>;
+        using TanFunction = std::function<double(double)>;
+        using ATan2Function = std::function<double(double, double)>;
+
+        MathKernel();
+
+        MathKernel(CosFunction fCos, ACosFunction fACos, SinFunction fSin, TanFunction fTan, ATan2Function fATan2)
+			: cos { fCos }
+			, acos{ fACos }
+			, sin{ fSin }
+			, tan{ fTan  }
+			, atan2{ fATan2 }
+		{}
+
+		CosFunction   cos;
+		ACosFunction  acos;
+		SinFunction   sin;
+		TanFunction   tan;
+		ATan2Function atan2;
+    };
+
 enum ClipType { ctIntersection, ctUnion, ctDifference, ctXor };
 enum PolyType { ptSubject, ptClip };
 //By far the most widely used winding rules for polygon filling are
@@ -366,8 +391,8 @@ public:
   ~ClipperOffset();
   void AddPath(const Path& path, JoinType joinType, EndType endType);
   void AddPaths(const Paths& paths, JoinType joinType, EndType endType);
-  void Execute(Paths& solution, double delta);
-  void Execute(PolyTree& solution, double delta);
+  void Execute(Paths& solution, double delta, const MathKernel& math = MathKernel() );
+  void Execute(PolyTree& solution, double delta, const MathKernel& math = MathKernel() );
   void Clear();
   double MiterLimit;
   double ArcTolerance;
@@ -382,11 +407,11 @@ private:
   PolyNode m_polyNodes;
 
   void FixOrientations();
-  void DoOffset(double delta);
-  void OffsetPoint(int j, int& k, JoinType jointype);
-  void DoSquare(int j, int k);
+  void DoOffset(double delta, const MathKernel& math);
+  void OffsetPoint(int j, int& k, JoinType jointype, const MathKernel& math);
+  void DoSquare(int j, int k, const MathKernel& math);
   void DoMiter(int j, int k, double r);
-  void DoRound(int j, int k);
+  void DoRound(int j, int k, const MathKernel& math);
 };
 //------------------------------------------------------------------------------
 
