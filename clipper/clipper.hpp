@@ -63,7 +63,7 @@
 
 namespace ClipperLib {
 
-    struct MathKernel
+    struct CLIPPER_API MathKernel
 	{
         using CosFunction = std::function<double(double)>;
         using ACosFunction = std::function<double(double)>;
