@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.0.2)
 # Build Properties
 set(CMAKE_INSTALL_INCLUDEDIR "include" CACHE PATH "Default relative include path.")
 set(CMAKE_INSTALL_LIBDIR "lib" CACHE PATH "Default relative lib path.")
+set(CMAKE_INSTALL_BINDIR "bin" CACHE PATH "Default relative bin path.")
 
 # Version 
 # Find '#define CLIPPER_VERSION "x.x.z"' and extract version
